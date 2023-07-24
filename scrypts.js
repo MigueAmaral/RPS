@@ -1,36 +1,15 @@
 const rps = ["rock", "paper", "scissors"];
-let winners = []
-
-function game(){
-    winners = [];
-    for (let i=0; i<5; i++){
-    oneRound(i+1);
-    }
-    document.querySelector("button").textContent = "Play again";
-    logWins();
-}
-
-function playerChoice (){
-    let input = prompt("Choose rock, paper or scissors.");
-    input = input.toLowerCase();
-    let check = checkInput(input);
-    while (check == false){
-        input = prompt("Choose rock, paper or scissors.");
-        input = input.toLowerCase();
-        check = checkInput(input);
-    };
-    return input;
-}
+const winners = []
 
 function getComputerChoice() {
     return rps[(Math.floor(Math.random() * rps.length))]
 };
 
-function oneRound(round){
+function oneRound(){
         const playerSelection = playerChoice();
         const computerSelection = getComputerChoice();
         const winner = checkWinner(playerSelection,computerSelection);
-        logRound(playerSelection,computerSelection,winner,round)
+        logRound(playerSelection,computerSelection,winner)
 }
 
 function checkWinner(playerC,computerC){
@@ -49,25 +28,48 @@ function checkWinner(playerC,computerC){
         }
 }
 
-function logWins() {
+function logRound(playerChoice,getComputerChoice,checkWinner) {
     let playerWins = winners.filter(item => item == "player").length;
     let computerWins = winners.filter(item => item == "computer").length;
     let ties = winners.filter(item => item == "tie").length;
-    console.log(`Results:`);
-    console.log(`Player won ${playerWins}`);
-    console.log(`Computer won ${computerWins}`);
-    console.log(`Ties: ${ties}`);
-}
-
-function logRound(playerChoice,getComputerChoice,checkWinner,round) {
-    console.log("Round ",round);
-    console.log("Player chose ",playerChoice);
-    console.log("Computer chose ",getComputerChoice);
-    console.log(checkWinner);
-    console.log("---------------------------")
+    document.getElementById("results").innerHTML = `Player chose: ${playerChoice}, Computer chose: ${getComputerChoice}`;
+    document.getElementById("roundWinner").innerHTML = `${checkWinner}`;
+    document.getElementById("tally").innerHTML = `Player: ${playerWins} wins ---- Computer: ${computerWins} wins ---- Ties: ${ties}`;
 }
 
 function checkInput(choice){
    return rps.includes(choice);
 }
 
+document.getElementById("rock").addEventListener("click", playGame);
+document.getElementById("paper").addEventListener("click", playGame);
+document.getElementById("scissors").addEventListener("click", playGame);
+
+function playerChoice(){
+    let input = event.target.id;
+    return input;
+    }
+
+function finishedGame(){
+    let playerWins = winners.filter(item => item == "player").length;
+    let computerWins = winners.filter(item => item == "computer").length;
+    if (playerWins == 5){ 
+        return 1
+    } else if (computerWins == 5){
+        return 2
+    }
+}
+
+function playGame(){
+        document.getElementById("victory").innerHTML = ``;
+        oneRound();
+        finishedGame()
+        if (finishedGame() === 1){
+            document.getElementById("victory").innerHTML = `PLAYER WON!`;
+        } else if (finishedGame() === 2){
+            document.getElementById("victory").innerHTML = `COMPUTER WON...`;
+            }
+        if (finishedGame() === 1 || finishedGame() === 2){
+            winners.length = 0;
+        }
+}
